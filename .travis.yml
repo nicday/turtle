@@ -11,5 +11,7 @@ before_install:
   - github.com/cenkalti/backoff
   - github.com/joho/godotenv
   - github.com/codegangsta/cli
+env:
+  - ENV=test
 script:
- - ENV=test go test -v ./...
+  - go test -v ./...
