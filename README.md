@@ -1,13 +1,22 @@
 # Turtle
 [![Build Status](https://travis-ci.org/nicday/turtle.svg?branch=master)](https://travis-ci.org/nicday/turtle)
 
-Sea turtles have migrating vast oceans for centuries and now you can be be power and grace of a turtle migration for your mySQL database.
+Sea turtles have migrating vast oceans for centuries and now you can be be power and grace of a turtle migration for
+your mySQL database.
 
 ## Installation
 
 ```sh
 go get github.com/nicday/turtle
 ```
+
+## Configuration
+Turtle relies on your database connection details being present in your environment variables in order to preform the
+migrations. Turtle will try to autoload `.env` from the working directory, merging any variables found into the
+environment.
+
+Please see `.env.default` for an example `.env` file.
+
 
 ## Commands
 The `generate` command generates a new set of migration files with your chosen migration name. Once the files have been
