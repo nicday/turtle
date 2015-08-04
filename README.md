@@ -1,4 +1,6 @@
 # Turtle
+[![Build Status](https://travis-ci.org/nicday/turtle.svg?branch=master)](https://travis-ci.org/nicday/turtle)
+
 Sea turtles have migrating vast oceans for centuries and now you can be be power and grace of a turtle migration for your mySQL database.
 
 ## Installation
