@@ -1,0 +1,219 @@
+package migration
+
+import (
+	"fmt"
+	"log"
+	"path"
+	"regexp"
+	"strings"
+
+	"github.com/nicday/turtle/db"
+)
+
+var (
+	upMigrationRegex   = regexp.MustCompile(`(\d+)_([\w-]+)_up\.sql`)
+	downMigrationRegex = regexp.MustCompile(`(\d+)_([\w-]+)_down\.sql`)
+	migrationIDRegex   = regexp.MustCompile(`(\d+)_([\w-]+)`)
+)
+
+// Migration is a SQL migration
+type Migration struct {
+	ID       string
+	UpPath   string
+	DownPath string
+
+	active bool
+}
+
+// AddPath adds or updates a path for a migration direction.
+func (m *Migration) AddPath(path string) {
+	if direction(path) == "up" {
+		m.UpPath = path
+	} else {
+		m.DownPath = path
+	}
+}
+
+// Apply runs the up migration on the database.
+func (m Migration) Apply() error {
+	// Return early if the migration is already active
+	active, err := db.MigrationActive(m.ID)
+	if err != nil {
+		return err
+	}
+	if active {
+		return nil
+	}
+
+	sql, err := FS.ReadFile(m.UpPath)
+	if err != nil {
+		return err
+	}
+
+	tx, err := db.Conn.Begin()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(string(sql))
+	if err != nil {
+		log.Printf("[Error] Unable to apply migration (%s): %v", m.ID, err)
+		if err := tx.Rollback(); err != nil {
+			log.Printf("[Error] Unable to roll back transaction: %v", err)
+			return err
+		}
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("[Error] Unable to commit transaction: %v", err)
+		return err
+	}
+
+	// Update the migration log
+	err = db.InsertMigration(m.ID)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Migration(%s) applied\n", m.ID)
+
+	return nil
+}
+
+// Revert runs the down migration on the database.
+func (m Migration) Revert() error {
+	// Return early if the migration isn't active
+	active, err := db.MigrationActive(m.ID)
+	if err != nil {
+		return err
+	}
+	if active == false {
+		return nil
+	}
+
+	sql, err := FS.ReadFile(m.DownPath)
+	if err != nil {
+		return err
+	}
+
+	tx, err := db.Conn.Begin()
+	if err != nil {
+		return err
+	}
+
+	_, err = tx.Exec(string(sql))
+	if err != nil {
+		log.Printf("[Error] Unable to revert migration (%s): %v", m.ID, err)
+		if err := tx.Rollback(); err != nil {
+			log.Printf("[Error] Unable to roll back transaction: %v", err)
+			return err
+		}
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		log.Printf("[Error] Unable to commit transaction: %v", err)
+		return err
+	}
+
+	// Update the migration log
+	err = db.DeleteMigration(m.ID)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("Migration (%s) reverted\n", m.ID)
+
+	return nil
+}
+
+// ApplyAll applies all migrations in chronological order.
+func ApplyAll() error {
+	migrations, err := all()
+	if err != nil {
+		return err
+	}
+
+	ordered := SortMigrations(migrations, "asc")
+
+	for _, m := range ordered {
+		err = m.Apply()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// RevertAll reverts all migrations in reverse chronological order.
+func RevertAll() error {
+	migrations, err := all()
+	if err != nil {
+		return err
+	}
+
+	ordered := SortMigrations(migrations, "desc")
+
+	for _, m := range ordered {
+		err = m.Revert()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// all returns a slice of migrations from the migration directory.
+func all() (map[string]*Migration, error) {
+	migrations := map[string]*Migration{}
+
+	dir, err := FS.Open(migrationDir)
+	if err != nil {
+		return migrations, err
+	}
+
+	files, err := dir.Readdir(0)
+	if err != nil {
+		return migrations, err
+	}
+
+	for _, file := range files {
+		if valid(file.Name()) {
+			id := migrationID(file.Name())
+			if _, ok := migrations[id]; !ok {
+				migrations[id] = &Migration{
+					ID: id,
+				}
+			}
+			m := migrations[id]
+			m.AddPath(path.Join(migrationDir, file.Name()))
+		}
+	}
+
+	return migrations, nil
+}
+
+// id returns the migration ID for a migration file
+func migrationID(filename string) string {
+	i := strings.LastIndex(filename, "_")
+	return filename[0:i]
+}
+
+func direction(filename string) string {
+	i := strings.LastIndex(filename, "_")
+	j := strings.LastIndex(filename, ".")
+	return filename[i+1 : j]
+}
+
+// valid validates the migration filename
+func valid(filename string) bool {
+	if upMigrationRegex.MatchString(filename) || downMigrationRegex.MatchString(filename) {
+		return true
+	}
+	return false
+}

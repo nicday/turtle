@@ -1,0 +1,7 @@
+.env
+
+# Compiled binary
+turtle
+
+# Generated migrations
+migrations/*
