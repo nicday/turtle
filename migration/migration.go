@@ -182,7 +182,7 @@ func RevertAll() error {
 func all() (map[string]*Migration, error) {
 	migrations := map[string]*Migration{}
 
-	dir, err := FS.Open(migrationDir)
+	dir, err := FS.Open(db.MigrationsPath)
 	if err != nil {
 		return migrations, err
 	}
@@ -201,7 +201,7 @@ func all() (map[string]*Migration, error) {
 				}
 			}
 			m := migrations[id]
-			m.AddPath(path.Join(migrationDir, file.Name()))
+			m.AddPath(path.Join(db.MigrationsPath, file.Name()))
 		}
 	}
 
