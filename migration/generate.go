@@ -11,8 +11,7 @@ import (
 )
 
 const (
-	timeFormat   = "20060102150405.000"
-	migrationDir = "migrations"
+	timeFormat = "20060102150405.000"
 )
 
 // Generate creates up and down migration files.
