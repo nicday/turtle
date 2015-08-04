@@ -132,6 +132,73 @@ var _ = Describe("migration", func() {
 
 	})
 
+	Describe(".Rollback(n)", func() {
+		Context("when n is 0", func() {
+			It("doesn't rollback any migrations", func() {
+				expectMigrationsTablePresenceQuery()
+
+				err := Rollback(0)
+
+				Expect(err).NotTo(HaveOccurred())
+
+			})
+		})
+
+		Context("when n is 1", func() {
+			It("rolls back a single migration", func() {
+				expectMigrationsTablePresenceQuery()
+
+				expectedMigrationActiveQuery("20150703234300003_third", true)
+				expectedMigration("DROP TABLE third")
+				expectedMigrationLogDelete("20150703234300003_third")
+
+				err := Rollback(1)
+
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+
+		Context("when n is 2", func() {
+			It("rolls back two migrations", func() {
+				expectMigrationsTablePresenceQuery()
+
+				expectedMigrationActiveQuery("20150703234300003_third", true)
+				expectedMigration("DROP TABLE third")
+				expectedMigrationLogDelete("20150703234300003_third")
+
+				expectedMigrationActiveQuery("20150703234300002_second", true)
+				expectedMigration("DROP TABLE second")
+				expectedMigrationLogDelete("20150703234300002_second")
+
+				err := Rollback(2)
+
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+
+		Context("when n is greater than the applied migrations", func() {
+			It("rolls back all migrations", func() {
+				expectMigrationsTablePresenceQuery()
+
+				expectedMigrationActiveQuery("20150703234300003_third", true)
+				expectedMigration("DROP TABLE third")
+				expectedMigrationLogDelete("20150703234300003_third")
+
+				expectedMigrationActiveQuery("20150703234300002_second", true)
+				expectedMigration("DROP TABLE second")
+				expectedMigrationLogDelete("20150703234300002_second")
+
+				expectedMigrationActiveQuery("20150703234300001_first", true)
+				expectedMigration("DROP TABLE first")
+				expectedMigrationLogDelete("20150703234300001_first")
+
+				err := Rollback(4)
+
+				Expect(err).NotTo(HaveOccurred())
+			})
+		})
+	})
+
 	Describe(".RevertAll", func() {
 		Context("with all active migrations", func() {
 			It("reverts all migrations", func() {
