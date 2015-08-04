@@ -10,17 +10,23 @@ import (
 
 const (
 	defaultMigrationsTableName = "migrations"
+	defaultMigrationsPath      = "migrations"
 	defaultDBPort              = "3306"
 	defaultDBUser              = "root"
 )
 
 var (
+	// MigrationsTableName is the table name where migrations are logged in the database.
 	MigrationsTableName string
-	dbHost              string
-	dbPort              string
-	dbName              string
-	dbUser              string
-	dbPassword          string
+
+	// MigrationsPath is the location that migration files will loaded from the filesystem.
+	MigrationsPath string
+
+	dbHost     string
+	dbPort     string
+	dbName     string
+	dbUser     string
+	dbPassword string
 
 	// ErrNoDBHost is raised when there is no DB_HOST in the environment variables
 	ErrNoDBHost = errors.New("DB_HOST not found in environment variables")
@@ -43,6 +49,11 @@ func initDBEnv() {
 	MigrationsTableName = os.Getenv("MIGRATIONS_TABLE_NAME")
 	if MigrationsTableName == "" {
 		MigrationsTableName = defaultMigrationsTableName
+	}
+
+	MigrationsPath = os.Getenv("MIGRATIONS_PATH")
+	if MigrationsPath == "" {
+		MigrationsPath = defaultMigrationsPath
 	}
 
 	dbHost = os.Getenv("DB_HOST")
