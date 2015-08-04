@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+
+	"github.com/nicday/turtle/config"
 )
 
 // MigrationsTablePresent returns true if the migrations is not present in the database.
@@ -110,7 +112,7 @@ func MigrationActive(id string) (bool, error) {
 func migrationsTablePresentSQL() string {
 	return fmt.Sprintf(
 		"SELECT 1 FROM %s LIMIT 1",
-		MigrationsTableName,
+		config.MigrationsTableName,
 	)
 }
 
@@ -118,7 +120,7 @@ func migrationsTablePresentSQL() string {
 func createMigrationsTableSQL() string {
 	return fmt.Sprintf(
 		"CREATE TABLE %s (id INT NOT NULL AUTO_INCREMENT, migration_id VARCHAR(255) NOT NULL UNIQUE, PRIMARY KEY(id))",
-		MigrationsTableName,
+		config.MigrationsTableName,
 	)
 }
 
@@ -126,7 +128,7 @@ func createMigrationsTableSQL() string {
 func dropMigrationsTableSQL() string {
 	return fmt.Sprintf(
 		"DROP TABLE %s",
-		MigrationsTableName,
+		config.MigrationsTableName,
 	)
 }
 
@@ -134,7 +136,7 @@ func dropMigrationsTableSQL() string {
 func insertMigrationSQL() string {
 	return fmt.Sprintf(
 		"INSERT INTO %s (migration_id) VALUES (?)",
-		MigrationsTableName,
+		config.MigrationsTableName,
 	)
 }
 
@@ -142,7 +144,7 @@ func insertMigrationSQL() string {
 func selectMigrationSQL() string {
 	return fmt.Sprintf(
 		"SELECT id FROM %s WHERE migration_id=?",
-		MigrationsTableName,
+		config.MigrationsTableName,
 	)
 }
 
@@ -150,6 +152,6 @@ func selectMigrationSQL() string {
 func deleteMigrationSQL() string {
 	return fmt.Sprintf(
 		"DELETE FROM %s WHERE migration_id=?",
-		MigrationsTableName,
+		config.MigrationsTableName,
 	)
 }

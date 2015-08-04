@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/nicday/turtle/db"
+	"github.com/nicday/turtle/config"
 )
 
 const (
@@ -30,7 +30,7 @@ func Generate(name string) error {
 
 // createMigrationFile creates the migration file in the migration directory.
 func createMigrationFile(name string) error {
-	_, err := os.Create(path.Join(db.MigrationsPath, name))
+	_, err := os.Create(path.Join(config.MigrationsPath, name))
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -41,9 +41,9 @@ func createMigrationFile(name string) error {
 
 // assertMigrationDir ensures that the migration direction exists and raises an error if it cannot be created.
 func assertMigrationDir() error {
-	_, err := os.Stat(db.MigrationsPath)
+	_, err := os.Stat(config.MigrationsPath)
 	if err != nil {
-		err := os.Mkdir(db.MigrationsPath, 0755)
+		err := os.Mkdir(config.MigrationsPath, 0755)
 		if err != nil {
 			return err
 		}

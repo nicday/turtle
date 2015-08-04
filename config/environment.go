@@ -1,4 +1,4 @@
-package db
+package config
 
 import (
 	"errors"
@@ -22,11 +22,20 @@ var (
 	// MigrationsPath is the location that migration files will loaded from the filesystem.
 	MigrationsPath = defaultMigrationsPath
 
-	dbHost     string
-	dbPort     string
-	dbName     string
-	dbUser     string
-	dbPassword string
+	// DBHost is the host address when the database is running.
+	DBHost string
+
+	// DBPort is the port the database is running on.
+	DBPort string
+
+	// DBName is the database name to preform migrations on.
+	DBName string
+
+	// DBUser is the username to use when preforming migrations.
+	DBUser string
+
+	// DBPassword is the password to use for the database user.
+	DBPassword string
 
 	// ErrNoDBHost is raised when there is no DB_HOST in the environment variables
 	ErrNoDBHost = errors.New("DB_HOST not found in environment variables")
@@ -38,7 +47,9 @@ var (
 	ErrNoDBName = errors.New("DB_NAME not found in environment variables")
 )
 
-func initDBEnv() {
+// InitEnv initializes the environment variables. An attempt will be made to load variables from a `.env`, this can
+// silently fail, so long as validation passes for the required variables.
+func InitEnv() {
 	if IsTestEnv() {
 		return
 	}
@@ -56,28 +67,28 @@ func initDBEnv() {
 		MigrationsPath = defaultMigrationsPath
 	}
 
-	dbHost = os.Getenv("DB_HOST")
-	if dbHost == "" {
+	DBHost = os.Getenv("DB_HOST")
+	if DBHost == "" {
 		log.Fatal(ErrNoDBHost)
 	}
 
-	dbPort = os.Getenv("DB_PORT")
-	if dbPort == "" {
-		dbPort = defaultDBPort
+	DBPort = os.Getenv("DB_PORT")
+	if DBPort == "" {
+		DBPort = defaultDBPort
 	}
 
-	dbName = os.Getenv("DB_NAME")
-	if dbName == "" {
+	DBName = os.Getenv("DB_NAME")
+	if DBName == "" {
 		log.Fatal(ErrNoDBName)
 	}
 
-	dbUser = os.Getenv("DB_USER")
-	if dbUser == "" {
-		dbUser = defaultDBUser
+	DBUser = os.Getenv("DB_USER")
+	if DBUser == "" {
+		DBUser = defaultDBUser
 	}
 
-	dbPassword = os.Getenv("DB_PASSWORD")
-	if dbPassword == "" {
+	DBPassword = os.Getenv("DB_PASSWORD")
+	if DBPassword == "" {
 		log.Fatal(ErrNoDBPassword)
 	}
 }
