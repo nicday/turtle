@@ -8,8 +8,7 @@ import (
 
 // MigrationsTablePresent returns true if the migrations is not present in the database.
 func MigrationsTablePresent() bool {
-	var v int
-	err := Conn.QueryRow(migrationsTablePresentSQL()).Scan(&v)
+	_, err := Conn.Exec(migrationsTablePresentSQL())
 	if err != nil {
 		return false
 	}
