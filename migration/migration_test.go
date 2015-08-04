@@ -222,4 +222,11 @@ func ExpectedMigrationActiveQuery(id string, active bool) {
 		query.WillReturnError(sql.ErrNoRows)
 	}
 
+func expectMigrationsTablePresenceQuery() {
+	expectedSQL := fmt.Sprintf(
+		"SELECT 1 FROM %s LIMIT 1",
+		db.MigrationsTableName,
+	)
+	sqlmock.ExpectQuery(regexp.QuoteMeta(expectedSQL)).
+		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
 }
