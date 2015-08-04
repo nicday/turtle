@@ -6,11 +6,11 @@ go:
  - 1.4
  - release
  - tip
-before_install:
-  - github.com/go-sql-driver/mysql
-  - github.com/cenkalti/backoff
-  - github.com/joho/godotenv
-  - github.com/codegangsta/cli
+install:
+  - go get github.com/go-sql-driver/mysql
+  - go get github.com/cenkalti/backoff
+  - go get github.com/joho/godotenv
+  - go get github.com/codegangsta/cli
 env:
   - ENV=test
 script:
