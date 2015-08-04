@@ -1,5 +1,6 @@
 # Turtle
 [![Build Status](https://travis-ci.org/nicday/turtle.svg?branch=master)](https://travis-ci.org/nicday/turtle)
+[![Coverage Status](https://coveralls.io/repos/nicday/turtle/badge.svg?branch=feature-test-coverage&service=github)](https://coveralls.io/github/nicday/turtle?branch=feature-test-coverage)
 
 Sea turtles have migrating vast oceans for centuries and now you can be be power and grace of a turtle migration for
 your mySQL database.

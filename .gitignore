@@ -5,3 +5,6 @@ turtle
 
 # Generated migrations
 migrations/*
+
+# Coverall profiles
+*.coverprofile
