@@ -240,6 +240,6 @@ func expectMigrationsTablePresenceQuery() {
 		"SELECT 1 FROM %s LIMIT 1",
 		db.MigrationsTableName,
 	)
-	sqlmock.ExpectQuery(regexp.QuoteMeta(expectedSQL)).
-		WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(1))
+	sqlmock.ExpectExec(regexp.QuoteMeta(expectedSQL)).
+		WillReturnResult(sqlmock.NewResult(0, 0))
 }
