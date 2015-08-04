@@ -75,17 +75,19 @@ var _ = Describe("migration", func() {
 	Describe(".ApplyAll", func() {
 		Context("with no active migrations", func() {
 			It("applies all migrations", func() {
-				ExpectedMigrationActiveQuery("20150703234300001_first", false)
-				ExpectedMigration("CREATE TABLE first")
-				ExpectedMigrationLogInsert("20150703234300001_first")
+				expectMigrationsTablePresenceQuery()
 
-				ExpectedMigrationActiveQuery("20150703234300002_second", false)
-				ExpectedMigration("CREATE TABLE second")
-				ExpectedMigrationLogInsert("20150703234300002_second")
+				expectedMigrationActiveQuery("20150703234300001_first", false)
+				expectedMigration("CREATE TABLE first")
+				expectedMigrationLogInsert("20150703234300001_first")
 
-				ExpectedMigrationActiveQuery("20150703234300003_third", false)
-				ExpectedMigration("CREATE TABLE third")
-				ExpectedMigrationLogInsert("20150703234300003_third")
+				expectedMigrationActiveQuery("20150703234300002_second", false)
+				expectedMigration("CREATE TABLE second")
+				expectedMigrationLogInsert("20150703234300002_second")
+
+				expectedMigrationActiveQuery("20150703234300003_third", false)
+				expectedMigration("CREATE TABLE third")
+				expectedMigrationLogInsert("20150703234300003_third")
 
 				err := ApplyAll()
 
@@ -95,15 +97,17 @@ var _ = Describe("migration", func() {
 
 		Context("with some active migrations", func() {
 			It("applies all inactive migrations", func() {
-				ExpectedMigrationActiveQuery("20150703234300001_first", true)
+				expectMigrationsTablePresenceQuery()
 
-				ExpectedMigrationActiveQuery("20150703234300002_second", false)
-				ExpectedMigration("CREATE TABLE second")
-				ExpectedMigrationLogInsert("20150703234300002_second")
+				expectedMigrationActiveQuery("20150703234300001_first", true)
 
-				ExpectedMigrationActiveQuery("20150703234300003_third", false)
-				ExpectedMigration("CREATE TABLE third")
-				ExpectedMigrationLogInsert("20150703234300003_third")
+				expectedMigrationActiveQuery("20150703234300002_second", false)
+				expectedMigration("CREATE TABLE second")
+				expectedMigrationLogInsert("20150703234300002_second")
+
+				expectedMigrationActiveQuery("20150703234300003_third", false)
+				expectedMigration("CREATE TABLE third")
+				expectedMigrationLogInsert("20150703234300003_third")
 
 				err := ApplyAll()
 
@@ -113,11 +117,13 @@ var _ = Describe("migration", func() {
 
 		Context("with all active migrations", func() {
 			It("doesn't apply any migrations", func() {
-				ExpectedMigrationActiveQuery("20150703234300001_first", true)
+				expectMigrationsTablePresenceQuery()
 
-				ExpectedMigrationActiveQuery("20150703234300002_second", true)
+				expectedMigrationActiveQuery("20150703234300001_first", true)
 
-				ExpectedMigrationActiveQuery("20150703234300003_third", true)
+				expectedMigrationActiveQuery("20150703234300002_second", true)
+
+				expectedMigrationActiveQuery("20150703234300003_third", true)
 
 				err := ApplyAll()
 
@@ -130,17 +136,19 @@ var _ = Describe("migration", func() {
 	Describe(".RevertAll", func() {
 		Context("with all active migrations", func() {
 			It("reverts all migrations", func() {
-				ExpectedMigrationActiveQuery("20150703234300003_third", true)
-				ExpectedMigration("DROP TABLE third")
-				ExpectedMigrationLogDelete("20150703234300003_third")
+				expectMigrationsTablePresenceQuery()
 
-				ExpectedMigrationActiveQuery("20150703234300002_second", true)
-				ExpectedMigration("DROP TABLE second")
-				ExpectedMigrationLogDelete("20150703234300002_second")
+				expectedMigrationActiveQuery("20150703234300003_third", true)
+				expectedMigration("DROP TABLE third")
+				expectedMigrationLogDelete("20150703234300003_third")
 
-				ExpectedMigrationActiveQuery("20150703234300001_first", true)
-				ExpectedMigration("DROP TABLE first")
-				ExpectedMigrationLogDelete("20150703234300001_first")
+				expectedMigrationActiveQuery("20150703234300002_second", true)
+				expectedMigration("DROP TABLE second")
+				expectedMigrationLogDelete("20150703234300002_second")
+
+				expectedMigrationActiveQuery("20150703234300001_first", true)
+				expectedMigration("DROP TABLE first")
+				expectedMigrationLogDelete("20150703234300001_first")
 
 				err := RevertAll()
 
@@ -150,13 +158,15 @@ var _ = Describe("migration", func() {
 
 		Context("with some active migrations", func() {
 			It("reverts all active migrations", func() {
-				ExpectedMigrationActiveQuery("20150703234300003_third", false)
+				expectMigrationsTablePresenceQuery()
 
-				ExpectedMigrationActiveQuery("20150703234300002_second", false)
+				expectedMigrationActiveQuery("20150703234300003_third", false)
 
-				ExpectedMigrationActiveQuery("20150703234300001_first", true)
-				ExpectedMigration("DROP TABLE first")
-				ExpectedMigrationLogDelete("20150703234300001_first")
+				expectedMigrationActiveQuery("20150703234300002_second", false)
+
+				expectedMigrationActiveQuery("20150703234300001_first", true)
+				expectedMigration("DROP TABLE first")
+				expectedMigrationLogDelete("20150703234300001_first")
 
 				err := RevertAll()
 
@@ -166,11 +176,13 @@ var _ = Describe("migration", func() {
 
 		Context("with all migrations inactive", func() {
 			It("doesn't revert any migrations", func() {
-				ExpectedMigrationActiveQuery("20150703234300003_third", false)
+				expectMigrationsTablePresenceQuery()
 
-				ExpectedMigrationActiveQuery("20150703234300002_second", false)
+				expectedMigrationActiveQuery("20150703234300003_third", false)
 
-				ExpectedMigrationActiveQuery("20150703234300001_first", false)
+				expectedMigrationActiveQuery("20150703234300002_second", false)
+
+				expectedMigrationActiveQuery("20150703234300001_first", false)
 
 				err := RevertAll()
 
@@ -180,7 +192,7 @@ var _ = Describe("migration", func() {
 	})
 })
 
-func ExpectedMigration(sql string) {
+func expectedMigration(sql string) {
 	// Migration transaction
 	sqlmock.ExpectBegin()
 	sqlmock.ExpectExec(regexp.QuoteMeta(sql)).
@@ -188,27 +200,27 @@ func ExpectedMigration(sql string) {
 	sqlmock.ExpectCommit()
 }
 
-func ExpectedMigrationLogInsert(id string) {
-	expectedMigrationLogSQL := fmt.Sprintf(
+func expectedMigrationLogInsert(id string) {
+	expectedSQL := fmt.Sprintf(
 		"INSERT INTO %s (migration_id) VALUES (?)",
 		db.MigrationsTableName,
 	)
-	sqlmock.ExpectExec(regexp.QuoteMeta(expectedMigrationLogSQL)).
+	sqlmock.ExpectExec(regexp.QuoteMeta(expectedSQL)).
 		WithArgs(id).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 }
 
-func ExpectedMigrationLogDelete(id string) {
-	expectedMigrationLogSQL := fmt.Sprintf(
+func expectedMigrationLogDelete(id string) {
+	expectedSQL := fmt.Sprintf(
 		"DELETE FROM %s WHERE migration_id=?",
 		db.MigrationsTableName,
 	)
-	sqlmock.ExpectExec(regexp.QuoteMeta(expectedMigrationLogSQL)).
+	sqlmock.ExpectExec(regexp.QuoteMeta(expectedSQL)).
 		WithArgs(id).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 }
 
-func ExpectedMigrationActiveQuery(id string, active bool) {
+func expectedMigrationActiveQuery(id string, active bool) {
 	expectedSQL := fmt.Sprintf(
 		"SELECT id FROM %s WHERE migration_id=?",
 		db.MigrationsTableName,
@@ -221,6 +233,7 @@ func ExpectedMigrationActiveQuery(id string, active bool) {
 	} else {
 		query.WillReturnError(sql.ErrNoRows)
 	}
+}
 
 func expectMigrationsTablePresenceQuery() {
 	expectedSQL := fmt.Sprintf(
