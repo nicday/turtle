@@ -6,6 +6,17 @@ import (
 	"log"
 )
 
+// MigrationsTablePresent returns true if the migrations is not present in the database.
+func MigrationsTablePresent() bool {
+	var v int
+	err := Conn.QueryRow(migrationsTablePresentSQL()).Scan(&v)
+	if err != nil {
+		return false
+	}
+
+	return true
+}
+
 // CreateMigrationsTable creates the migrations table in the database.
 func CreateMigrationsTable() error {
 	query, err := Conn.Prepare(createMigrationsTableSQL())
@@ -94,6 +105,14 @@ func MigrationActive(id string) (bool, error) {
 	default:
 		return true, nil
 	}
+}
+
+// migrationsTablePresentSQL returns the SQL for checking if the migrations table is present.
+func migrationsTablePresentSQL() string {
+	return fmt.Sprintf(
+		"SELECT 1 FROM %s LIMIT 1",
+		MigrationsTableName,
+	)
 }
 
 // createMigrationsTableSQL returns the SQL for creating the migrations table.

@@ -132,6 +132,11 @@ func (m Migration) Revert() error {
 
 // ApplyAll applies all migrations in chronological order.
 func ApplyAll() error {
+	err := assertMigrationTable()
+	if err != nil {
+		return err
+	}
+
 	migrations, err := all()
 	if err != nil {
 		return err
@@ -151,6 +156,11 @@ func ApplyAll() error {
 
 // RevertAll reverts all migrations in reverse chronological order.
 func RevertAll() error {
+	err := assertMigrationTable()
+	if err != nil {
+		return err
+	}
+
 	migrations, err := all()
 	if err != nil {
 		return err
@@ -216,4 +226,18 @@ func valid(filename string) bool {
 		return true
 	}
 	return false
+}
+
+// assertMigrationTable ensures that the migration table is present in the database.
+func assertMigrationTable() error {
+	if db.MigrationsTablePresent() {
+		return nil
+	}
+
+	err := db.CreateMigrationsTable()
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
