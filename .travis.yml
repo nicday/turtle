@@ -8,6 +8,7 @@ install:
   - go get github.com/cenkalti/backoff
   - go get github.com/joho/godotenv
   - go get github.com/codegangsta/cli
+  - go get github.com/DATA-DOG/go-sqlmock
 env:
   - ENV=test
 script:
