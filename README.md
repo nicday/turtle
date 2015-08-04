@@ -1,6 +1,12 @@
 # Turtle
 Sea turtles have migrating vast oceans for centuries and now you can be be power and grace of a turtle migration for your mySQL database.
 
+## Installation
+
+```sh
+go get github.com/nicday/turtle
+```
+
 ## Commands
 The `generate` command generates a new set of migration files with your chosen migration name. Once the files have been
 generated you will need to populate them with your migration SQL.
