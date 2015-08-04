@@ -179,6 +179,40 @@ func RevertAll() error {
 	return nil
 }
 
+// Rollback preforms down migrations for `n` active migrations.
+func Rollback(n int) error {
+	err := assertMigrationTable()
+	if err != nil {
+		return err
+	}
+
+	migrations, err := all()
+	if err != nil {
+		return err
+	}
+
+	ordered := SortMigrations(migrations, "desc")
+
+	count := 1
+
+	for _, m := range ordered {
+		// If the count of performed migrations if greater than the number to rollback, we're done.
+		if count > n {
+			break
+		}
+		completed, err := m.Revert()
+		if err != nil {
+			return err
+		}
+		// Only increment the counter if the migration was completed.
+		if completed {
+			count++
+		}
+	}
+
+	return nil
+}
+
 // all returns a slice of migrations from the migration directory.
 func all() (map[string]*Migration, error) {
 	migrations := map[string]*Migration{}
