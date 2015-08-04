@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"os"
+	"strconv"
 
 	"github.com/codegangsta/cli"
 	"github.com/nicday/turtle/migration"
@@ -28,7 +30,6 @@ func main() {
 					migrationName := c.Args()[0]
 					migration.Generate(migrationName)
 				}
-
 			},
 		},
 		cli.Command{
@@ -36,7 +37,6 @@ func main() {
 			Aliases: []string{"u"},
 			Usage:   "Processes all outstanding migrations",
 			Action: func(c *cli.Context) {
-				// db.CreateMigrationsTable()
 				migration.ApplyAll()
 			},
 		},
@@ -46,6 +46,24 @@ func main() {
 			Usage:   "Processes all outstanding migrations",
 			Action: func(c *cli.Context) {
 				migration.RevertAll()
+			},
+		},
+		cli.Command{
+			Name:    "rollback",
+			Aliases: []string{"r"},
+			Usage:   "Rollback n active migrations",
+			Action: func(c *cli.Context) {
+				if len(c.Args()) == 0 {
+					fmt.Println("Please call with a number of migrations to rollback, e.g. `turtle rollback 3`")
+					return
+				}
+				if len(c.Args()) != 0 {
+					n, err := strconv.Atoi(c.Args()[0])
+					if err != nil {
+						log.Fatal("[Error] Rollback parameter is not an integer")
+					}
+					migration.Rollback(n)
+				}
 			},
 		},
 	}

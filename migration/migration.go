@@ -83,25 +83,25 @@ func (m Migration) Apply() error {
 	return nil
 }
 
-// Revert runs the down migration on the database.
-func (m Migration) Revert() error {
+// Revert runs the down migration on the database. True will be returned if the migration was completed.
+func (m Migration) Revert() (bool, error) {
 	// Return early if the migration isn't active
 	active, err := db.MigrationActive(m.ID)
 	if err != nil {
-		return err
+		return false, err
 	}
 	if active == false {
-		return nil
+		return false, nil
 	}
 
 	sql, err := FS.ReadFile(m.DownPath)
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	tx, err := db.Conn.Begin()
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	_, err = tx.Exec(string(sql))
@@ -109,26 +109,26 @@ func (m Migration) Revert() error {
 		log.Printf("[Error] Unable to revert migration (%s): %v", m.ID, err)
 		if err := tx.Rollback(); err != nil {
 			log.Printf("[Error] Unable to roll back transaction: %v", err)
-			return err
+			return false, err
 		}
-		return err
+		return false, err
 	}
 
 	err = tx.Commit()
 	if err != nil {
 		log.Printf("[Error] Unable to commit transaction: %v", err)
-		return err
+		return false, err
 	}
 
 	// Update the migration log
 	err = db.DeleteMigration(m.ID)
 	if err != nil {
-		return err
+		return false, err
 	}
 
 	fmt.Printf("Migration (%s) reverted\n", m.ID)
 
-	return nil
+	return true, nil
 }
 
 // ApplyAll applies all migrations in chronological order.
@@ -170,9 +170,43 @@ func RevertAll() error {
 	ordered := SortMigrations(migrations, "desc")
 
 	for _, m := range ordered {
-		err = m.Revert()
+		_, err := m.Revert()
 		if err != nil {
 			return err
+		}
+	}
+
+	return nil
+}
+
+// Rollback preforms down migrations for `n` active migrations.
+func Rollback(n int) error {
+	err := assertMigrationTable()
+	if err != nil {
+		return err
+	}
+
+	migrations, err := all()
+	if err != nil {
+		return err
+	}
+
+	ordered := SortMigrations(migrations, "desc")
+
+	count := 1
+
+	for _, m := range ordered {
+		// If the count of performed migrations if greater than the number to rollback, we're done.
+		if count > n {
+			break
+		}
+		completed, err := m.Revert()
+		if err != nil {
+			return err
+		}
+		// Only increment the counter if the migration was completed.
+		if completed {
+			count++
 		}
 	}
 

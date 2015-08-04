@@ -39,7 +39,6 @@ turtle down
 ```
 
 ### TODO
-- Ability to revert _n_ migrations
 - Ability to revert to migration _x_
 - Add PostgreSQL support
 - Provide information output on performed migrations
