@@ -6,6 +6,7 @@ import (
 	"regexp"
 
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/nicday/turtle/config"
 	"github.com/nicday/turtle/db"
 	. "github.com/nicday/turtle/migration"
 
@@ -37,8 +38,6 @@ var _ = Describe("migration", func() {
 	)
 
 	FS = mockFS
-
-	db.MigrationsTableName = "migrations"
 
 	Describe("#AddPath", func() {
 		Context("with an up migration path", func() {
@@ -203,7 +202,7 @@ func expectedMigration(sql string) {
 func expectedMigrationLogInsert(id string) {
 	expectedSQL := fmt.Sprintf(
 		"INSERT INTO %s (migration_id) VALUES (?)",
-		db.MigrationsTableName,
+		config.MigrationsTableName,
 	)
 	sqlmock.ExpectExec(regexp.QuoteMeta(expectedSQL)).
 		WithArgs(id).
@@ -213,7 +212,7 @@ func expectedMigrationLogInsert(id string) {
 func expectedMigrationLogDelete(id string) {
 	expectedSQL := fmt.Sprintf(
 		"DELETE FROM %s WHERE migration_id=?",
-		db.MigrationsTableName,
+		config.MigrationsTableName,
 	)
 	sqlmock.ExpectExec(regexp.QuoteMeta(expectedSQL)).
 		WithArgs(id).
@@ -223,7 +222,7 @@ func expectedMigrationLogDelete(id string) {
 func expectedMigrationActiveQuery(id string, active bool) {
 	expectedSQL := fmt.Sprintf(
 		"SELECT id FROM %s WHERE migration_id=?",
-		db.MigrationsTableName,
+		config.MigrationsTableName,
 	)
 	query := sqlmock.ExpectQuery(regexp.QuoteMeta(expectedSQL)).
 		WithArgs(id)
@@ -238,7 +237,7 @@ func expectedMigrationActiveQuery(id string, active bool) {
 func expectMigrationsTablePresenceQuery() {
 	expectedSQL := fmt.Sprintf(
 		"SELECT 1 FROM %s LIMIT 1",
-		db.MigrationsTableName,
+		config.MigrationsTableName,
 	)
 	sqlmock.ExpectExec(regexp.QuoteMeta(expectedSQL)).
 		WillReturnResult(sqlmock.NewResult(0, 0))

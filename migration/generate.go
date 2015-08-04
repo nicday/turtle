@@ -6,11 +6,12 @@ import (
 	"path"
 	"strings"
 	"time"
+
+	"github.com/nicday/turtle/config"
 )
 
 const (
-	timeFormat   = "20060102150405.000"
-	migrationDir = "migrations"
+	timeFormat = "20060102150405.000"
 )
 
 // Generate creates up and down migration files.
@@ -29,7 +30,7 @@ func Generate(name string) error {
 
 // createMigrationFile creates the migration file in the migration directory.
 func createMigrationFile(name string) error {
-	_, err := os.Create(path.Join(migrationDir, name))
+	_, err := os.Create(path.Join(config.MigrationsPath, name))
 	if err != nil {
 		fmt.Println(err)
 		return err
@@ -40,9 +41,9 @@ func createMigrationFile(name string) error {
 
 // assertMigrationDir ensures that the migration direction exists and raises an error if it cannot be created.
 func assertMigrationDir() error {
-	_, err := os.Stat(migrationDir)
+	_, err := os.Stat(config.MigrationsPath)
 	if err != nil {
-		err := os.Mkdir(migrationDir, 0755)
+		err := os.Mkdir(config.MigrationsPath, 0755)
 		if err != nil {
 			return err
 		}

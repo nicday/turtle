@@ -9,6 +9,7 @@ import (
 
 	// mysql driver
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/nicday/turtle/config"
 
 	"github.com/cenkalti/backoff"
 )
@@ -25,12 +26,12 @@ var (
 )
 
 func init() {
-	initDBEnv()
-	if IsTestEnv() {
+	config.InitEnv()
+	if config.IsTestEnv() {
 		return
 	}
 
-	connString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPassword, dbHost, dbPort, dbName)
+	connString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
 
 	c, err := sql.Open("mysql", connString)
 	if err != nil {

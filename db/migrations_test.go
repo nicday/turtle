@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"regexp"
 
+	"github.com/nicday/turtle/config"
 	. "github.com/nicday/turtle/db"
 
 	sqlmock "github.com/DATA-DOG/go-sqlmock"
@@ -29,14 +30,14 @@ var _ = Describe("db", func() {
 	}
 
 	for desc, tableName := range tableNames {
-		MigrationsTableName = tableName
+		config.MigrationsTableName = tableName
 
 		Context(fmt.Sprintf("with %s table name", desc), func() {
 			Describe(".CreateMigrationsTable", func() {
 				It("creates the migration table in the database", func() {
 					expectedSQL := fmt.Sprintf(
 						"CREATE TABLE %s (id INT NOT NULL AUTO_INCREMENT, migration_id VARCHAR(255) NOT NULL UNIQUE, PRIMARY KEY(id))",
-						MigrationsTableName,
+						config.MigrationsTableName,
 					)
 					sqlmock.ExpectExec(regexp.QuoteMeta(expectedSQL)).
 						WillReturnResult(sqlmock.NewResult(0, 0))
@@ -51,7 +52,7 @@ var _ = Describe("db", func() {
 				It("drops the migration table in the database", func() {
 					expectedSQL := fmt.Sprintf(
 						"DROP TABLE %s",
-						MigrationsTableName,
+						config.MigrationsTableName,
 					)
 					sqlmock.ExpectExec(regexp.QuoteMeta(expectedSQL)).
 						WillReturnResult(sqlmock.NewResult(0, 0))
@@ -66,7 +67,7 @@ var _ = Describe("db", func() {
 					ID := "123"
 					expectedSQL := fmt.Sprintf(
 						"INSERT INTO %s (migration_id) VALUES (?)",
-						MigrationsTableName,
+						config.MigrationsTableName,
 					)
 					sqlmock.ExpectExec(regexp.QuoteMeta(expectedSQL)).
 						WithArgs(ID).
@@ -82,7 +83,7 @@ var _ = Describe("db", func() {
 					ID := "123"
 					expectedSQL := fmt.Sprintf(
 						"DELETE FROM %s WHERE migration_id=?",
-						MigrationsTableName,
+						config.MigrationsTableName,
 					)
 					sqlmock.ExpectExec(regexp.QuoteMeta(expectedSQL)).
 						WithArgs(ID).
@@ -99,7 +100,7 @@ var _ = Describe("db", func() {
 						ID := "123"
 						expectedSQL := fmt.Sprintf(
 							"SELECT id FROM %s WHERE migration_id=?",
-							MigrationsTableName,
+							config.MigrationsTableName,
 						)
 						sqlmock.ExpectQuery(regexp.QuoteMeta(expectedSQL)).
 							WithArgs(ID).
@@ -117,7 +118,7 @@ var _ = Describe("db", func() {
 						ID := "123"
 						expectedSQL := fmt.Sprintf(
 							"SELECT id FROM %s WHERE migration_id=?",
-							MigrationsTableName,
+							config.MigrationsTableName,
 						)
 						sqlmock.ExpectQuery(regexp.QuoteMeta(expectedSQL)).
 							WithArgs(ID).

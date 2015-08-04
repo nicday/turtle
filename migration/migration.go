@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strings"
 
+	"github.com/nicday/turtle/config"
 	"github.com/nicday/turtle/db"
 )
 
@@ -182,7 +183,7 @@ func RevertAll() error {
 func all() (map[string]*Migration, error) {
 	migrations := map[string]*Migration{}
 
-	dir, err := FS.Open(migrationDir)
+	dir, err := FS.Open(config.MigrationsPath)
 	if err != nil {
 		return migrations, err
 	}
@@ -201,7 +202,7 @@ func all() (map[string]*Migration, error) {
 				}
 			}
 			m := migrations[id]
-			m.AddPath(path.Join(migrationDir, file.Name()))
+			m.AddPath(path.Join(config.MigrationsPath, file.Name()))
 		}
 	}
 

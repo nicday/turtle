@@ -43,7 +43,6 @@ turtle down
 - Ability to revert to migration _x_
 - Add PostgreSQL support
 - Provide information output on performed migrations
-- Allow custom migration path
 - Example of using turtle migrations within Go
 - Create and update schema file after each performed migration
 
