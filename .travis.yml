@@ -4,14 +4,13 @@ go:
   - release
   - tip
 install:
-  - go get github.com/go-sql-driver/mysql
-  - go get github.com/cenkalti/backoff
-  - go get github.com/joho/godotenv
-  - go get github.com/codegangsta/cli
-  - go get github.com/DATA-DOG/go-sqlmock
-  - go get github.com/onsi/ginkgo
-  - go get github.com/onsi/gomega
+  - go get github.com/mattn/goveralls
+  - go get code.google.com/p/go.tools/cmd/cover
+  - go get github.com/modocache/gover
+  - go get ./...
 env:
   - ENV=test
 script:
-  - go test -v ./...
+  - ginkgo -r --randomizeAllSpecs -cover
+  - gover
+  - goveralls -service=travis-ci -coverprofile=gover.coverprofile -repotoken $COVERALLS_TOKEN
