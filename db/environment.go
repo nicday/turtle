@@ -17,10 +17,10 @@ const (
 
 var (
 	// MigrationsTableName is the table name where migrations are logged in the database.
-	MigrationsTableName string
+	MigrationsTableName = defaultMigrationsTableName
 
 	// MigrationsPath is the location that migration files will loaded from the filesystem.
-	MigrationsPath string
+	MigrationsPath = defaultMigrationsPath
 
 	dbHost     string
 	dbPort     string
