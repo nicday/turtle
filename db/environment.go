@@ -37,10 +37,8 @@ func initDBEnv() {
 		return
 	}
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
+	// Don't worry about an error here, .env might not be present; So long as we have the environment variables required.
+	godotenv.Load()
 
 	MigrationsTableName = os.Getenv("MIGRATIONS_TABLE_NAME")
 	if MigrationsTableName == "" {
