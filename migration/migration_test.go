@@ -39,8 +39,6 @@ var _ = Describe("migration", func() {
 
 	FS = mockFS
 
-	config.MigrationsTableName = "migrations"
-
 	Describe("#AddPath", func() {
 		Context("with an up migration path", func() {
 			It("sets UpPath to the path", func() {
