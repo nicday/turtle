@@ -1,8 +1,8 @@
 language: go
 go:
- - 1.4
- - release
- - tip
+  - 1.4
+  - release
+  - tip
 install:
   - go get github.com/go-sql-driver/mysql
   - go get github.com/cenkalti/backoff
