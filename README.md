@@ -39,7 +39,6 @@ turtle down
 ```
 
 ### TODO
-- Setup Travis CI
 - Ability to revert _n_ migrations
 - Ability to revert to migration _x_
 - Add PostgreSQL support
