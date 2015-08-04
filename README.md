@@ -37,5 +37,9 @@ turtle down
 - Example of using turtle migrations within Go
 - Create and update schema file after each performed migration
 
-### Author
+## Author
 Nic Day
+
+
+## License
+Turtle is MIT-Licensed
