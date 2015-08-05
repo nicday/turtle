@@ -15,14 +15,6 @@ import (
 )
 
 var _ = Describe("db", func() {
-	// Setup a mock DB connection
-	mockDB, err := sqlmock.New()
-	if err != nil {
-		panic(err)
-	}
-
-	Conn = mockDB
-
 	// TODO: default is not actually using the default
 	tableNames := map[string]string{
 		"the default": "migrations",
