@@ -23,6 +23,9 @@ var (
 
 	// ErrUnableToConnectToDB is raised when a connection to the database cannot be established.
 	ErrUnableToConnectToDB = errors.New("unable to connect to the database")
+
+	// BackoffTimeout is the total time the backoff with wait before failing.
+	BackoffTimeout = time.Duration(30) * time.Second
 )
 
 func init() {
@@ -56,7 +59,7 @@ func VerifyConnection(c *sql.DB) error {
 	}
 
 	expBackoff := backoff.NewExponentialBackOff()
-	expBackoff.MaxElapsedTime = time.Duration(30) * time.Second
+	expBackoff.MaxElapsedTime = BackoffTimeout
 
 	err := backoff.Retry(pingDB, expBackoff)
 	if err != nil {
