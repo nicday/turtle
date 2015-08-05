@@ -53,9 +53,9 @@ func init() {
 
 // VerifyConnection pings the database to verify a connection is established. If the connection cannot be established,
 // it will retry with an exponential back off.
-func VerifyConnection(c *sql.DB) error {
+func VerifyConnection() {
 	pingDB := func() error {
-		return c.Ping()
+		return Conn.Ping()
 	}
 
 	expBackoff := backoff.NewExponentialBackOff()
@@ -63,8 +63,7 @@ func VerifyConnection(c *sql.DB) error {
 
 	err := backoff.Retry(pingDB, expBackoff)
 	if err != nil {
-		log.Fatal(ErrUnableToConnectToDB)
+		log.Println("[Error]", ErrUnableToConnectToDB)
+		panic(err)
 	}
-
-	return nil
 }
