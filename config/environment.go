@@ -93,6 +93,13 @@ func InitEnv() {
 	}
 }
 
+// DontRunInTest will only run `f` when not in a test environment.
+func DontRunInTest(f func()) {
+	if !IsTestEnv() {
+		f()
+	}
+}
+
 // IsTestEnv returns true when the ENV=test
 func IsTestEnv() bool {
 	env := os.Getenv("ENV")
