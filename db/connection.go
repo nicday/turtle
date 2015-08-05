@@ -29,26 +29,32 @@ var (
 )
 
 func init() {
+	err := InitConn()
+	if err != nil {
+		log.Println("[Error]", err)
+	}
+
+	config.DontRunInTest(VerifyConnection)
+}
+
+// InitConn initializes the database connection. This is called by init but is also exported to allow testing.
+func InitConn() error {
 	config.InitEnv()
 	if config.IsTestEnv() {
-		return
+		return nil
 	}
 
 	connString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
 
 	c, err := sql.Open("mysql", connString)
 	if err != nil {
-		log.Println("[Error]", err)
-		log.Fatal(ErrUnableToParseDBConnection)
-	}
-
-	err = VerifyConnection(c)
-	if err != nil {
-		log.Println("[Error]", err)
-		log.Fatal(ErrUnableToConnectToDB)
+		log.Println("[Error]", ErrUnableToParseDBConnection)
+		return err
 	}
 
 	Conn = c
+
+	return nil
 }
 
 // VerifyConnection pings the database to verify a connection is established. If the connection cannot be established,
