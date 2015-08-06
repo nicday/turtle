@@ -8,7 +8,8 @@ import (
 )
 
 var _ = Describe("migration", func() {
-	Describe(".Generate", func() {
+	// TODO: Remove pending state once new files can be written to the mockFS
+	PDescribe(".Generate", func() {
 
 	})
 })
