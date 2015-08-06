@@ -9,6 +9,7 @@ import (
 	"github.com/nicday/turtle/config"
 	"github.com/nicday/turtle/db"
 	. "github.com/nicday/turtle/migration"
+	"github.com/nicday/turtle/test_helpers"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -24,16 +25,16 @@ var _ = Describe("migration", func() {
 	db.Conn = mockDB
 
 	// Setup a mock filesystem
-	mockFS := NewMockFS()
+	mockFS := testHelpers.NewMockFS()
 	mockFS.AddFiles(
 		"",
-		NewMockFile("migrations", []byte(""),
-			NewMockFile("20150703234300001_first_up.sql", []byte("CREATE TABLE first")),
-			NewMockFile("20150703234300002_second_up.sql", []byte("CREATE TABLE second")),
-			NewMockFile("20150703234300003_third_up.sql", []byte("CREATE TABLE third")),
-			NewMockFile("20150703234300001_first_down.sql", []byte("DROP TABLE first")),
-			NewMockFile("20150703234300002_second_down.sql", []byte("DROP TABLE second")),
-			NewMockFile("20150703234300003_third_down.sql", []byte("DROP TABLE third")),
+		testHelpers.NewMockFile("migrations", []byte(""),
+			testHelpers.NewMockFile("20150703234300001_first_up.sql", []byte("CREATE TABLE first")),
+			testHelpers.NewMockFile("20150703234300002_second_up.sql", []byte("CREATE TABLE second")),
+			testHelpers.NewMockFile("20150703234300003_third_up.sql", []byte("CREATE TABLE third")),
+			testHelpers.NewMockFile("20150703234300001_first_down.sql", []byte("DROP TABLE first")),
+			testHelpers.NewMockFile("20150703234300002_second_down.sql", []byte("DROP TABLE second")),
+			testHelpers.NewMockFile("20150703234300003_third_down.sql", []byte("DROP TABLE third")),
 		),
 	)
 

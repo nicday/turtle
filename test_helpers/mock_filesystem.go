@@ -1,40 +1,14 @@
-package migration
+package testHelpers
 
 import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"os"
 	"time"
+
+	"github.com/nicday/turtle/fs"
 )
-
-// FS is the active FileSystem
-var FS FileSystem = osFS{}
-
-// FileSystem is a generic interface for a file system.
-type FileSystem interface {
-	Open(name string) (File, error)
-	Stat(name string) (os.FileInfo, error)
-	ReadFile(name string) ([]byte, error)
-}
-
-// File is a generic interface for a file.
-type File interface {
-	io.Closer
-	io.Reader
-	io.ReaderAt
-	io.Seeker
-	Stat() (os.FileInfo, error)
-	Readdir(n int) ([]os.FileInfo, error)
-}
-
-// osFS implements FileSystem using by wrapping the os package.
-type osFS struct{}
-
-func (osFS) Open(name string) (File, error)        { return os.Open(name) }
-func (osFS) Stat(name string) (os.FileInfo, error) { return os.Stat(name) }
-func (osFS) ReadFile(name string) ([]byte, error)  { return ioutil.ReadFile(name) }
 
 // MockFS is a concrete implementation of the File interface.
 type MockFS struct {
@@ -77,7 +51,7 @@ func (m *MockFS) AddFiles(path string, files ...MockFile) error {
 }
 
 // Open satisfies the File interface. It will return a File or raise an error.
-func (m MockFS) Open(name string) (File, error) {
+func (m MockFS) Open(name string) (fs.File, error) {
 	file, ok := m.Files[name]
 	if !ok {
 		return &MockFile{}, errors.New("file not found")
