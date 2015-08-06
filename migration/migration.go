@@ -46,7 +46,7 @@ func (m Migration) Apply() error {
 		return nil
 	}
 
-	sql, err := FS.ReadFile(m.UpPath)
+	sql, err := config.FS.ReadFile(m.UpPath)
 	if err != nil {
 		return err
 	}
@@ -94,7 +94,7 @@ func (m Migration) Revert() (bool, error) {
 		return false, nil
 	}
 
-	sql, err := FS.ReadFile(m.DownPath)
+	sql, err := config.FS.ReadFile(m.DownPath)
 	if err != nil {
 		return false, err
 	}
@@ -217,7 +217,7 @@ func Rollback(n int) error {
 func all() (map[string]*Migration, error) {
 	migrations := map[string]*Migration{}
 
-	dir, err := FS.Open(config.MigrationsPath)
+	dir, err := config.FS.Open(config.MigrationsPath)
 	if err != nil {
 		return migrations, err
 	}

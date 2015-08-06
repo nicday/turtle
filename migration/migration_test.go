@@ -38,7 +38,7 @@ var _ = Describe("migration", func() {
 		),
 	)
 
-	FS = mockFS
+	config.FS = mockFS
 
 	Describe("#AddPath", func() {
 		Context("with an up migration path", func() {

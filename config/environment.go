@@ -6,6 +6,7 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/nicday/turtle/fs"
 )
 
 const (
@@ -45,6 +46,9 @@ var (
 
 	// ErrNoDBName is raised when there is no DB_NAME in the environment variables
 	ErrNoDBName = errors.New("DB_NAME not found in environment variables")
+
+	// FS is the active FileSystem. This allows for a replacement filesystem in test.
+	FS fs.FileSystem = fs.OS{}
 )
 
 // InitEnv initializes the environment variables. An attempt will be made to load variables from a `.env`, this can
