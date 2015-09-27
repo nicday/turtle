@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/codegangsta/cli"
+	"github.com/nicday/turtle/db"
 	"github.com/nicday/turtle/migration"
 )
 
@@ -33,10 +34,27 @@ func main() {
 			},
 		},
 		cli.Command{
+			Name:    "create",
+			Aliases: []string{"c"},
+			Usage:   "Creates the database on the host",
+			Action: func(c *cli.Context) {
+				migration.CreateDB()
+			},
+		},
+		cli.Command{
+			Name:    "drop",
+			Aliases: []string{"c"},
+			Usage:   "Creates the database on the host",
+			Action: func(c *cli.Context) {
+				migration.DropDB()
+			},
+		},
+		cli.Command{
 			Name:    "up",
 			Aliases: []string{"u"},
 			Usage:   "Processes all outstanding migrations",
 			Action: func(c *cli.Context) {
+				db.UseDB()
 				migration.ApplyAll()
 			},
 		},
@@ -45,6 +63,7 @@ func main() {
 			Aliases: []string{"d"},
 			Usage:   "Processes all outstanding migrations",
 			Action: func(c *cli.Context) {
+				db.UseDB()
 				migration.RevertAll()
 			},
 		},
@@ -62,6 +81,7 @@ func main() {
 					if err != nil {
 						log.Fatal("[Error] Rollback parameter is not an integer")
 					}
+					db.UseDB()
 					migration.Rollback(n)
 				}
 			},

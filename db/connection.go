@@ -30,8 +30,7 @@ func init() {
 	if config.IsTestEnv() {
 		return
 	}
-
-	connString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", config.DBUser, config.DBPassword, config.DBHost, config.DBPort, config.DBName)
+	connString := fmt.Sprintf("%s:%s@tcp(%s:%s)/", config.DBUser, config.DBPassword, config.DBHost, config.DBPort)
 
 	c, err := sql.Open("mysql", connString)
 	if err != nil {
@@ -60,7 +59,19 @@ func VerifyConnection(c *sql.DB) error {
 
 	err := backoff.Retry(pingDB, expBackoff)
 	if err != nil {
-		log.Fatal(ErrUnableToConnectToDB)
+		return err
+	}
+
+	return nil
+}
+
+// UseDB runs the `USE` SQL command, ensuring that all future SQL commands on the database connection use the named
+// database.
+func UseDB() error {
+	_, err := Conn.Exec(fmt.Sprintf("USE %s", config.DBName))
+
+	if err != nil {
+		return err
 	}
 
 	return nil
