@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"regexp"
 
-	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/nicday/turtle/config"
 	"github.com/nicday/turtle/db"
 	. "github.com/nicday/turtle/migration"
+	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v0"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
