@@ -22,6 +22,9 @@ var (
 	// MigrationsPath is the location that migration files will loaded from the filesystem.
 	MigrationsPath = defaultMigrationsPath
 
+	// DBDriver is the driver to use when interfacing with the database.
+	DBDriver string
+
 	// DBHost is the host address when the database is running.
 	DBHost string
 
@@ -36,6 +39,9 @@ var (
 
 	// DBPassword is the password to use for the database user.
 	DBPassword string
+
+	// ErrUnknownDBDriver is raised when the database driver is not `mysql` or `postgres`
+	ErrUnknownDBDriver = errors.New("DB_DRIVER is unknown, must be either `mysql` or `postgres`")
 
 	// ErrNoDBHost is raised when there is no DB_HOST in the environment variables
 	ErrNoDBHost = errors.New("DB_HOST not found in environment variables")
@@ -65,6 +71,16 @@ func InitEnv() {
 	MigrationsPath = os.Getenv("MIGRATIONS_PATH")
 	if MigrationsPath == "" {
 		MigrationsPath = defaultMigrationsPath
+	}
+
+	DBDriver = os.Getenv("DB_DRIVER")
+	switch DBDriver {
+	case "mysql", "postgres":
+
+	case "":
+		DBDriver = "mysql"
+	default:
+		return ErrUnknownDBDriver
 	}
 
 	DBHost = os.Getenv("DB_HOST")
