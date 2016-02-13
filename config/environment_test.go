@@ -44,16 +44,6 @@ var _ = Describe("config", func() {
 				Expect(err).To(Equal(ErrNoDBName))
 			})
 		})
-
-		Context("with an unknown database driver", func() {
-			It("returns an error", func() {
-				os.Setenv("DB_DRIVER", "somethingelse")
-
-				err := InitEnv()
-				Expect(err).To(HaveOccurred())
-				Expect(err).To(Equal(ErrUnknownDBDriver))
-			})
-		})
 	})
 
 	Describe(".IsTestEnv", func() {

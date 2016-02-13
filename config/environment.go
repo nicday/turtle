@@ -70,14 +70,6 @@ func InitEnv() error {
 	}
 
 	DBDriver = os.Getenv("DB_DRIVER")
-	switch DBDriver {
-	case "mysql", "postgres":
-
-	case "":
-		DBDriver = "mysql"
-	default:
-		return ErrUnknownDBDriver
-	}
 
 	DBHost = os.Getenv("DB_HOST")
 	if DBHost == "" {
