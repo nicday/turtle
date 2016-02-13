@@ -2,7 +2,6 @@ package config
 
 import (
 	"errors"
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
@@ -52,9 +51,9 @@ var (
 
 // InitEnv initializes the environment variables. An attempt will be made to load variables from a `.env`, this can
 // silently fail, so long as validation passes for the required variables.
-func InitEnv() {
+func InitEnv() error {
 	if IsTestEnv() {
-		return
+		return nil
 	}
 
 	// Don't worry about an error here, .env might not be present; So long as we have the environment variables required.
@@ -82,7 +81,7 @@ func InitEnv() {
 
 	DBHost = os.Getenv("DB_HOST")
 	if DBHost == "" {
-		log.Fatal(ErrNoDBHost)
+		return ErrNoDBHost
 	}
 
 	DBPort = os.Getenv("DB_PORT")
@@ -92,7 +91,7 @@ func InitEnv() {
 
 	DBName = os.Getenv("DB_NAME")
 	if DBName == "" {
-		log.Fatal(ErrNoDBName)
+		return ErrNoDBName
 	}
 
 	DBUser = os.Getenv("DB_USER")
@@ -101,6 +100,7 @@ func InitEnv() {
 	}
 
 	DBPassword = os.Getenv("DB_PASSWORD")
+	return nil
 }
 
 // IsTestEnv returns true when the ENV=test
