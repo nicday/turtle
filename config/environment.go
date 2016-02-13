@@ -46,9 +46,6 @@ var (
 	// ErrNoDBHost is raised when there is no DB_HOST in the environment variables
 	ErrNoDBHost = errors.New("DB_HOST not found in environment variables")
 
-	// ErrNoDBPassword is raised when there is no DB_PASSWORD in the environment variables
-	ErrNoDBPassword = errors.New("DB_PASSWORD not found in environment variables")
-
 	// ErrNoDBName is raised when there is no DB_NAME in the environment variables
 	ErrNoDBName = errors.New("DB_NAME not found in environment variables")
 )
@@ -104,9 +101,6 @@ func InitEnv() {
 	}
 
 	DBPassword = os.Getenv("DB_PASSWORD")
-	if DBPassword == "" {
-		log.Fatal(ErrNoDBPassword)
-	}
 }
 
 // IsTestEnv returns true when the ENV=test
