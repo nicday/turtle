@@ -14,6 +14,7 @@ var _ = Describe("config", func() {
 		os.Setenv("DB_HOST", "localhost")
 		os.Setenv("DB_NAME", "test")
 		os.Setenv("ENV", "")
+		os.Setenv("DB_DRIVER", "")
 	})
 
 	Describe(".InitEnv", func() {
