@@ -26,7 +26,11 @@ var (
 )
 
 func init() {
-	config.InitEnv()
+	err := config.InitEnv()
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	if config.IsTestEnv() {
 		return
 	}
