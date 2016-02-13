@@ -25,7 +25,8 @@ var (
 	ErrUnableToConnectToDB = errors.New("unable to connect to the database")
 )
 
-func init() {
+// InitConnection initializes the database connection
+func InitConnection() {
 	err := config.InitEnv()
 	if err != nil {
 		log.Fatal(err)
@@ -34,7 +35,7 @@ func init() {
 	if config.IsTestEnv() {
 		return
 	}
-	connString := fmt.Sprintf("%s:%s@tcp(%s:%s)/", config.DBUser, config.DBPassword, config.DBHost, config.DBPort)
+	connString := ConnString()
 
 	c, err := sql.Open("mysql", connString)
 	if err != nil {
@@ -49,6 +50,34 @@ func init() {
 	}
 
 	Conn = c
+}
+
+// ConnString returns the connection string for the database driver.
+func ConnString() string {
+	switch config.DBDriver {
+	case "mysql":
+		return mysqlConnString()
+	case "postgres":
+		return postgresConnString()
+	default:
+		log.Fatal(config.ErrUnknownDBDriver)
+		return ""
+	}
+}
+
+func connCredentials() string {
+	if config.DBPassword != "" {
+		return fmt.Sprintf("%s:%s", config.DBUser, config.DBPassword)
+	}
+	return config.DBUser
+}
+
+func mysqlConnString() string {
+	return fmt.Sprintf("%s@tcp(%s:%s)/", connCredentials(), config.DBHost, config.DBPort)
+}
+
+func postgresConnString() string {
+	return fmt.Sprintf("postgres://%s@%s:%s?sslmode=disable", connCredentials(), config.DBHost, config.DBPort)
 }
 
 // VerifyConnection pings the database to verify a connection is established. If the connection cannot be established,
