@@ -44,7 +44,7 @@ func main() {
 		cli.Command{
 			Name:    "drop",
 			Aliases: []string{"c"},
-			Usage:   "Creates the database on the host",
+			Usage:   "Drops the database on the host",
 			Action: func(c *cli.Context) {
 				migration.DropDB()
 			},
@@ -61,7 +61,7 @@ func main() {
 		cli.Command{
 			Name:    "down",
 			Aliases: []string{"d"},
-			Usage:   "Processes all outstanding migrations",
+			Usage:   "Reverts all applied migrations",
 			Action: func(c *cli.Context) {
 				db.UseDB()
 				migration.RevertAll()
