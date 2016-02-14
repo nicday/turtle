@@ -77,7 +77,7 @@ func mysqlConnString() string {
 }
 
 func postgresConnString() string {
-	return fmt.Sprintf("postgres://%s@%s:%s?sslmode=disable", connCredentials(), config.DBHost, config.DBPort)
+	return fmt.Sprintf("postgres://%s@%s:%s/%s?sslmode=disable", connCredentials(), config.DBHost, config.DBPort, config.DBName)
 }
 
 // VerifyConnection pings the database to verify a connection is established. If the connection cannot be established,

@@ -43,7 +43,7 @@ var _ = Describe("db", func() {
 				config.InitEnv()
 
 				actual := ConnString()
-				expected := "postgres://user@host:port?sslmode=disable"
+				expected := "postgres://user@host:port/test?sslmode=disable"
 				Expect(actual).To(Equal(expected))
 			})
 		})
